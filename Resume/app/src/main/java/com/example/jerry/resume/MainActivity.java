@@ -43,10 +43,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // How to send an email
+        // plain text means sending only text
         emailButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                emailIntent.setType("plain/text");
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"Ayylmao@hotmail.com", "lmao@outlook.com"});
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Hello, this is the subject");
+                emailIntent.putExtra(Intent.EXTRA_TEXT, "This is the body of the text");
+                startActivity(emailIntent);
             }
         });
     }
