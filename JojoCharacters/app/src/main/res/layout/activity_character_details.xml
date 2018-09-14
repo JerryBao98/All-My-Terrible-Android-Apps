@@ -6,4 +6,32 @@
     android:layout_height="match_parent"
     tools:context=".CharacterDetailsActivity">
 
+    <TextView
+        android:id="@+id/nameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="176dp"
+        android:layout_marginStart="176dp"
+        android:text="TextView"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="383dp" />
+
+    <TextView
+        android:id="@+id/standTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="22dp"
+        android:layout_marginTop="28dp"
+        android:text="TextView"
+        app:layout_constraintTop_toBottomOf="@+id/nameTextView"
+        tools:layout_editor_absoluteX="177dp" />
+
+    <TextView
+        android:id="@+id/duwangTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginTop="28dp"
+        android:text="TextView"
+        app:layout_constraintTop_toBottomOf="@+id/standTextView"
+        tools:layout_editor_absoluteX="177dp" />
 </android.support.constraint.ConstraintLayout>
