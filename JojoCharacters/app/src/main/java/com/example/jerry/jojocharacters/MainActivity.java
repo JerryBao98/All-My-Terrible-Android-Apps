@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        System.out.println("Tapped");
         Intent moveToDetailIntent = new Intent(getBaseContext(), CharacterDetailsActivity.class);
         moveToDetailIntent.putExtra("characterName", characters[position]);
         startActivity(moveToDetailIntent);
