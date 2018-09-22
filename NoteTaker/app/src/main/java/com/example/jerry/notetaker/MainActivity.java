@@ -17,20 +17,34 @@ import android.widget.ListView;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     static ArrayList<String> notes = new ArrayList<>();
     static ArrayAdapter arrayAdapter;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        sharedPreferences = getApplicationContext().getSharedPreferences("com.example.jerry.notetaker", Context.MODE_PRIVATE);
         ListView listview = findViewById(R.id.listView);
-        notes.add("Example Note");
+
+        HashSet<String> set = (HashSet<String>) sharedPreferences.getStringSet("notes", null);
+
+        // Check if there is any available data
+        if(set == null){
+            notes.add("Example Note");
+        }else{
+            notes = new ArrayList(set);
+        }
+
+
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, notes);
         listview.setAdapter(arrayAdapter);
 
@@ -59,8 +73,6 @@ public class MainActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 notes.remove(position);
                                 arrayAdapter.notifyDataSetChanged();
-
-                                SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.jerry.notetaker", Context.MODE_PRIVATE);
                                 HashSet<String> set = new HashSet<>(MainActivity.notes);
                                 sharedPreferences.edit().putStringSet("notes", set).apply();
                             }
