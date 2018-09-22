@@ -7,9 +7,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Spinner;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class NoteActivity extends AppCompatActivity {
 
@@ -23,6 +29,20 @@ public class NoteActivity extends AppCompatActivity {
         EditText editText = findViewById(R.id.editText);
         Intent intent = getIntent();
         noteId = intent.getIntExtra("noteId", -1);
+
+        List<String> spinnerArray =  new ArrayList<String>();
+        spinnerArray.add("item1");
+        spinnerArray.add("item2");
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, spinnerArray);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        Spinner spinner = (Spinner) findViewById(R.id.emotionSpinner);
+        if (spinner != null){
+            //String emotionText = spinner.getSelectedItem().toString();
+            //editText.setText(emotionText);
+        }
 
         if (noteId != -1){
             editText.setText(MainActivity.notes.get(noteId));
