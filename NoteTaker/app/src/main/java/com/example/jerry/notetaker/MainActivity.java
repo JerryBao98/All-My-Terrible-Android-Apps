@@ -22,45 +22,79 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashSet;
 
 public class MainActivity extends AppCompatActivity {
 
     static ArrayList<String> notes = new ArrayList<>();
-    static ArrayList<Emotion> emotionsArrayList = new ArrayList<Emotion>();
+    static ArrayList<Emotion> emotionsArrayList = new ArrayList<>();
     static ArrayAdapter arrayAdapter;
+    Button addEmotionButton;
+    Button emotionSummaryButton;
+    Button saveButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button saveButton = findViewById(R.id.saveButton);
+        /*saveButton = (Button) findViewById(R.id.addEmotionButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveData();
             }
         });
+*/
+        // Buttons for adding in a new emotion and getting a summary report
+        addEmotionButton = findViewById(R.id.addEmotionButton);
+        addEmotionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openAddActivity();
+            }
+        });
+
+        emotionSummaryButton = findViewById(R.id.emotionSummaryButton);
+
 
         ListView listview = findViewById(R.id.listView);
-        notes.add("Example Note");
+        /*notes.add("Example Note");
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, notes);
         listview.setAdapter(arrayAdapter);
+*/
+
+        Joy joy = new Joy();
+        joy.setDate(new Date(System.currentTimeMillis()));
+        Fear fear = new Fear();
+        fear.setDate(new Date(System.currentTimeMillis()));
+        Fear feara = new Fear();
+        feara.setDate(new Date(System.currentTimeMillis()));
+        Fear fearb = new Fear();
+        fearb.setDate(new Date(System.currentTimeMillis()));
+
+        emotionsArrayList.add(fear);
+        emotionsArrayList.add(joy);
+        emotionsArrayList.add(feara);
+        emotionsArrayList.add(fearb);
+
+        EmotionAdapter adapter = new EmotionAdapter(this, R.layout.adapter_view_layout, emotionsArrayList);
+        listview.setAdapter(adapter);
 
         // When you click on an item in the list
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+/*        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), NoteActivity.class);
                 intent.putExtra("noteId", position);
                 startActivity(intent);
             }
-        });
+        });*/
 
         // Return true so that we can long click
-        listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+/*        listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
 
@@ -86,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
                 return true;
             }
-        });
+        });*/
 
     }
 
@@ -109,16 +143,22 @@ public class MainActivity extends AppCompatActivity {
         emotionsArrayList = gson.fromJson(json, type);
     }
 
+    public void openAddActivity(){
+        Intent intent = new Intent(this, NoteActivity.class);
+        startActivity(intent);
+    }
+
+
     // For the menu
-    @Override
+/*    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.add_note_menu, menu);
 
         return super.onCreateOptionsMenu(menu);
-    }
+    }*/
 
-    @Override
+/*    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
 
@@ -129,5 +169,5 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return false;
-    }
+    }*/
 }

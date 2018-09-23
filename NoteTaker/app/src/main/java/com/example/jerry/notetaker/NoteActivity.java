@@ -7,19 +7,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
 public class NoteActivity extends AppCompatActivity {
 
     int noteId;
+    private Spinner emotionSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,19 +36,31 @@ public class NoteActivity extends AppCompatActivity {
         Intent intent = getIntent();
         noteId = intent.getIntExtra("noteId", -1);
 
-        List<String> spinnerArray =  new ArrayList<String>();
-        spinnerArray.add("item1");
-        spinnerArray.add("item2");
+        emotionSpinner = findViewById(R.id.emotionSpinner);
+        List<Emotion> emotionList = new ArrayList<>();
+        Joy joy = new Joy();
+        Fear fear = new Fear();
+        emotionList.add(joy);
+        emotionList.add(fear);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                this, android.R.layout.simple_spinner_item, spinnerArray);
+        ArrayAdapter<Emotion> adapter = new ArrayAdapter<Emotion>(this,
+                android.R.layout.simple_spinner_item, emotionList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        Spinner spinner = (Spinner) findViewById(R.id.emotionSpinner);
-        if (spinner != null){
-            //String emotionText = spinner.getSelectedItem().toString();
-            //editText.setText(emotionText);
-        }
+        emotionSpinner.setAdapter(adapter);
+        emotionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Emotion emotion = (Emotion) parent.getSelectedItem();
+                displayEmotion(emotion);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
 
         if (noteId != -1){
             editText.setText(MainActivity.notes.get(noteId));
@@ -73,5 +91,19 @@ public class NoteActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void getSelectedEmotion(View v){
+        Emotion emotion = (Emotion) emotionSpinner.getSelectedItem();
+        displayEmotion(emotion);
+    }
+
+    private void displayEmotion(Emotion emotion){
+        String name = emotion.getEmotionName();
+        emotion.setDate(new Date(System.currentTimeMillis()));
+        Date date = emotion.getDate();
+        String nameAndDate = "Feeling some " + name + " on: " + date.toString();
+
+        Toast.makeText(this, nameAndDate, Toast.LENGTH_LONG).show();
     }
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:weightSum="100"
+    >
+
+    <!--Have a weight != 50, so that time and emotion take up an unequal space-->
+    <TextView
+        android:gravity="center"
+        android:textAlignment="center"
+        android:text="TextView1"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:id="@+id/emotionTextView"
+        android:layout_weight="70"/>
+
+    <TextView
+        android:gravity="center"
+        android:textAlignment="center"
+        android:text="TextView1"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:id="@+id/dateTextView"
+        android:layout_weight="30"/>
+
+</LinearLayout>

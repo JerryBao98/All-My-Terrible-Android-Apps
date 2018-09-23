@@ -1,5 +1,7 @@
 package com.example.jerry.notetaker;
 
+import android.widget.Spinner;
+
 import java.util.Date;
 
 public class Joy extends Emotion {
@@ -21,7 +23,6 @@ public class Joy extends Emotion {
         this.date = date;
     }
 
-
     // Getters
     public Date getDate(){
         return this.date;
@@ -32,6 +33,11 @@ public class Joy extends Emotion {
     }
 
     public String getEmotionName(){
+        return this.emotionName;
+    }
+
+    @Override
+    public String toString(){
         return this.emotionName;
     }
 }

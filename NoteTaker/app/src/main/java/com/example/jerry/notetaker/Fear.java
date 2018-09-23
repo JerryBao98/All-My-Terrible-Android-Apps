@@ -34,4 +34,9 @@ public class Fear extends Emotion {
     public String getEmotionName(){
         return this.emotionName;
     }
+
+    @Override
+    public String toString(){
+        return this.emotionName;
+    }
 }
