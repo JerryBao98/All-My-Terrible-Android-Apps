@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
     static ArrayAdapter arrayAdapter;
     Button addEmotionButton;
     Button emotionSummaryButton;
-    Button saveButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 */
+        // One time check
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if(!prefs.getBoolean("firstTime", false)) {
+            Joy joy = new Joy();
+            joy.setDate(new Date(System.currentTimeMillis()));
+            Fear fear = new Fear();
+            fear.setDate(new Date(System.currentTimeMillis()));
+            Fear feara = new Fear();
+            feara.setDate(new Date(System.currentTimeMillis()));
+            Fear fearb = new Fear();
+            fearb.setDate(new Date(System.currentTimeMillis()));
+
+            feara.setComment("Fear A");
+            fearb.setComment("Hello Guys, fear B");
+
+            emotionsArrayList.add(fear);
+            emotionsArrayList.add(joy);
+            emotionsArrayList.add(feara);
+            emotionsArrayList.add(fearb);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("firstTime", true);
+            editor.commit();
+        }
+
+
         // Buttons for adding in a new emotion and getting a summary report
         addEmotionButton = findViewById(R.id.addEmotionButton);
         addEmotionButton.setOnClickListener(new View.OnClickListener() {
@@ -66,32 +92,19 @@ public class MainActivity extends AppCompatActivity {
         listview.setAdapter(arrayAdapter);
 */
 
-        Joy joy = new Joy();
-        joy.setDate(new Date(System.currentTimeMillis()));
-        Fear fear = new Fear();
-        fear.setDate(new Date(System.currentTimeMillis()));
-        Fear feara = new Fear();
-        feara.setDate(new Date(System.currentTimeMillis()));
-        Fear fearb = new Fear();
-        fearb.setDate(new Date(System.currentTimeMillis()));
-
-        emotionsArrayList.add(fear);
-        emotionsArrayList.add(joy);
-        emotionsArrayList.add(feara);
-        emotionsArrayList.add(fearb);
-
+        // The custom layout for the adapter, shows the emotion as well as the time
         EmotionAdapter adapter = new EmotionAdapter(this, R.layout.adapter_view_layout, emotionsArrayList);
         listview.setAdapter(adapter);
 
         // When you click on an item in the list
-/*        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), NoteActivity.class);
-                intent.putExtra("noteId", position);
+                intent.putExtra("emotionId", position);
                 startActivity(intent);
             }
-        });*/
+        });
 
         // Return true so that we can long click
 /*        listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -124,30 +137,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    // Save the Array list of emotions using Gson and sharedpreferences
-    private void saveData(){
-        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(emotionsArrayList);
-        editor.putString("task list", json);
-        editor.apply();
-    }
-
-    // Load the Array list
-    private void loadData(){
-        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString("task list", null);
-        Type type = new TypeToken<ArrayList<Emotion>>() {}.getType();
-        emotionsArrayList = gson.fromJson(json, type);
-    }
-
     public void openAddActivity(){
         Intent intent = new Intent(this, NoteActivity.class);
         startActivity(intent);
     }
-
 
     // For the menu
 /*    @Override

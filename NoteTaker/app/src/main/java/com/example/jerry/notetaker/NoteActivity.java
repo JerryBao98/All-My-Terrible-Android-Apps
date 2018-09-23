@@ -24,30 +24,75 @@ import java.util.List;
 
 public class NoteActivity extends AppCompatActivity {
 
-    int noteId;
+    int emotionId;
     private Spinner emotionSpinner;
+    Button saveButton;
+    Button cancelButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note);
 
-        EditText editText = findViewById(R.id.editText);
+        // Get the Intent, as well as the comment field: edit text
+        final EditText editText = findViewById(R.id.editText);
         Intent intent = getIntent();
-        noteId = intent.getIntExtra("noteId", -1);
 
+        // Get the id of the object you are using
+        emotionId = intent.getIntExtra("emotionId", -1);
         emotionSpinner = findViewById(R.id.emotionSpinner);
-        List<Emotion> emotionList = new ArrayList<>();
-        Joy joy = new Joy();
-        Fear fear = new Fear();
-        emotionList.add(joy);
-        emotionList.add(fear);
 
-        ArrayAdapter<Emotion> adapter = new ArrayAdapter<Emotion>(this,
-                android.R.layout.simple_spinner_item, emotionList);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Get the save and cancel buttons
+        saveButton = findViewById(R.id.saveButton);
+        cancelButton = findViewById(R.id.cancelButton);
 
-        emotionSpinner.setAdapter(adapter);
+        // Populate the spinner as well as the comment section
+        if (emotionId != -1){
+            Emotion emotion = MainActivity.emotionsArrayList.get(emotionId);
+            List<Emotion> singleList = new ArrayList<>();
+            singleList.add(emotion);
+
+            ArrayAdapter<Emotion> adapter = populateSpinner(singleList);
+            emotionSpinner.setAdapter(adapter);
+            editText.setText(MainActivity.emotionsArrayList.get(emotionId).getComment());
+        }
+        // If we are adding in a new emotion
+        else{
+            ArrayAdapter<Emotion> adapter = populateSpinner(populateAllEmotions());
+            emotionSpinner.setAdapter(adapter);
+            Emotion emotion = getEmotionFromSpinner();
+            MainActivity.emotionsArrayList.add(emotion);
+            //Joy placeHolder = new Joy();
+            //placeHolder.setDate(new Date(System.currentTimeMillis()));
+            //MainActivity.emotionsArrayList.add(placeHolder);
+            //emotionId = MainActivity.emotionsArrayList.size() - 1;
+        }
+
+        /*editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Emotion emotion = MainActivity.emotionsArrayList.get(emotionId);
+                emotion.setComment(String.valueOf(s));
+
+                //MainActivity.notes.set(emotionId, String.valueOf(s));
+                //MainActivity.arrayAdapter.notifyDataSetChanged();
+
+                //SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.jerry.notetaker", Context.MODE_PRIVATE);
+                //HashSet<String> set = new HashSet<>(MainActivity.notes);
+                //sharedPreferences.edit().putStringSet("notes", set).apply();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });*/
+
         emotionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -61,41 +106,33 @@ public class NoteActivity extends AppCompatActivity {
             }
         });
 
-
-        if (noteId != -1){
-            editText.setText(MainActivity.notes.get(noteId));
-        }
-        else{
-            MainActivity.notes.add("");
-            noteId = MainActivity.notes.size() - 1;
-        }
-
-        editText.addTextChangedListener(new TextWatcher() {
+        saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                MainActivity.notes.set(noteId, String.valueOf(s));
-                MainActivity.arrayAdapter.notifyDataSetChanged();
-
-                SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.jerry.notetaker", Context.MODE_PRIVATE);
-                HashSet<String> set = new HashSet<>(MainActivity.notes);
-                sharedPreferences.edit().putStringSet("notes", set).apply();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
+            public void onClick(View v) {
+                Emotion emotion = (Emotion) emotionSpinner.getSelectedItem();
+                onSave(emotion, editText.getText().toString());
+                openMainActivity();
             }
         });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openMainActivity();
+            }
+        });
+
     }
 
-    public void getSelectedEmotion(View v){
+    // On pressing the save button, set the comment and date of the emotion
+    public void onSave(Emotion emotion, String comment){
+        emotion.setComment(comment);
+        emotion.setDate(new Date(System.currentTimeMillis()));
+    }
+
+    public Emotion getEmotionFromSpinner(){
         Emotion emotion = (Emotion) emotionSpinner.getSelectedItem();
-        displayEmotion(emotion);
+        return emotion;
     }
 
     private void displayEmotion(Emotion emotion){
@@ -103,7 +140,33 @@ public class NoteActivity extends AppCompatActivity {
         emotion.setDate(new Date(System.currentTimeMillis()));
         Date date = emotion.getDate();
         String nameAndDate = "Feeling some " + name + " on: " + date.toString();
-
         Toast.makeText(this, nameAndDate, Toast.LENGTH_LONG).show();
     }
+
+    // Adds all possible emotions to a list
+    // returns that list as output
+    // Called only when a NEW emotion instance is added
+    private List<Emotion> populateAllEmotions(){
+        List<Emotion> emotionList = new ArrayList<>();
+        Joy joy = new Joy();
+        Fear fear = new Fear();
+        emotionList.add(joy);
+        emotionList.add(fear);
+        return emotionList;
+    }
+
+    // Populates the spinner
+    // List of emotions as input and an array adapter of those emotions as the output
+    private ArrayAdapter<Emotion> populateSpinner(List<Emotion> emotionList){
+        ArrayAdapter<Emotion> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, emotionList);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        return adapter;
+    }
+
+    public void openMainActivity(){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
 }
